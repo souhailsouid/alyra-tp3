@@ -8,3 +8,7 @@
 ## Frontend
 
 1. Lancer le frontend avec `npm run dev` ou `pnpm dev`
+
+## Divers
+
+Lien vers les tâches: https://github.com/users/Pandazaur/projects/4/views/1
