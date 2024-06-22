@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner'
 
 import '../styles/globals.css'
 import '@rainbow-me/rainbowkit/styles.css'
+import { WorkflowStatusProvider } from './context/WorkflowStatusContext'
 
 const config = getDefaultConfig({
     appName: 'RainbowKit App',
@@ -25,17 +26,19 @@ function MyApp({ children }: { children: ReactNode }) {
                 <WagmiProvider config={config}>
                     <QueryClientProvider client={client}>
                         <RainbowKitProvider>
-                            {children}
-                            <Toaster
-                                toastOptions={{
-                                    classNames: {
-                                        error: 'bg-red-500 text-white',
-                                        success: 'text-green-400',
-                                        warning: 'text-yellow-400',
-                                        info: 'bg-blue-400',
-                                    },
-                                }}
-                            />
+                            <WorkflowStatusProvider>
+                                {children}
+                                <Toaster
+                                    toastOptions={{
+                                        classNames: {
+                                            error: 'bg-red-500 text-white',
+                                            success: 'text-green-400',
+                                            warning: 'text-yellow-400',
+                                            info: 'bg-blue-400',
+                                        },
+                                    }}
+                                />
+                            </WorkflowStatusProvider>
                         </RainbowKitProvider>
                     </QueryClientProvider>
                 </WagmiProvider>
