@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useWatchContractEvent } from 'wagmi'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import VotingContract from '@/types/contracts/voting.sol/Voting.json'
+import ProposalDescription from './ProposalDescription'
 
 export default function ProposalsTable() {
     const [proposalId, setProposalId] = useState<string[]>([])
@@ -26,12 +27,16 @@ export default function ProposalsTable() {
                 <TableHeader>
                     <TableRow>
                         <TableHead>Proposal ID</TableHead>
+                        <TableHead>Description</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {proposalId.map((idProposal) => (
                         <TableRow key={idProposal}>
-                            <TableCell className="w-[40px]">{idProposal}</TableCell>
+                            <TableCell className="w-[100px]">{idProposal}</TableCell>
+                            <TableCell>
+                                <ProposalDescription proposalId={idProposal} />
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

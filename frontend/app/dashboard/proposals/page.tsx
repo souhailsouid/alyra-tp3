@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { useWorkflowStatusContext } from '@/app/context/WorkflowStatusContext'
 import ProposalsRegistering from '@/components/proposalsRegistering'
 import VotingSession from '@/components/VotingSession'
-import ProposalsTable from '@/components/table/proposalsList'
+import ProposalsTable from './shared/proposalsList'
 import ProposalForm from '@/components/forms/proposalForm'
 import TallyVotes from '@/components/TallyVotes'
 import ViewsWinnerProposal from '@/components/viewsWinnerProposal'
@@ -13,17 +13,9 @@ import VotingForm from '@/components/forms/votingForm'
 import { useUserRole } from '@/app/hooks/useUserRole'
 import WorkflowStatusComponent from '@/components/ui/WorkflowStatusComponent'
 
-
-
 export default function Pages() {
-
     const { currentStatus, showError, isLoading } = useWorkflowStatusContext()
     const { isConnected, isAdmin, isVoter, isUserRoleLoading } = useUserRole()
-
-    useEffect(() => {
-    }, [currentStatus])
-
-
 
     const showContentWithStatus = () => {
         switch (currentStatus) {
@@ -37,7 +29,6 @@ export default function Pages() {
             default:
                 return <ProposalsRegistering />
         }
-
     }
     const showFormsWithContext = () => {
         switch (currentStatus) {
@@ -49,7 +40,6 @@ export default function Pages() {
                 return null
         }
     }
-
 
     if (isLoading) return <div>Verification de status en cours</div>
     if (showError) return <div>Erreur lors du changement de status</div>
