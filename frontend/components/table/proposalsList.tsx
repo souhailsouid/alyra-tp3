@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { useWatchContractEvent } from 'wagmi'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import VotingContract from '@/../backend/artifacts/contracts/voting.sol/Voting.json'
+import VotingContract from '@/types/contracts/voting.sol/Voting.json'
 
 export default function ProposalsTable() {
     const [proposalId, setProposalId] = useState<string[]>([])
@@ -13,11 +13,11 @@ export default function ProposalsTable() {
         eventName: 'ProposalRegistered',
         fromBlock: 1n,
         onLogs: (logs: any[]) => {
-            setProposalId((prevProposals) =>
-                [...new Set([...prevProposals, ...logs.map((log) => log.args.proposalId.toString())])]
-            );
+            setProposalId((prevProposals) => [
+                ...new Set([...prevProposals, ...logs.map((log) => log.args.proposalId.toString())]),
+            ])
         },
-    });
+    })
 
     return (
         <>
@@ -31,9 +31,7 @@ export default function ProposalsTable() {
                 <TableBody>
                     {proposalId.map((idProposal) => (
                         <TableRow key={idProposal}>
-                            <TableCell className="w-[40px]">
-                                {idProposal}
-                            </TableCell>
+                            <TableCell className="w-[40px]">{idProposal}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import VotingContract from '@/../backend/artifacts/contracts/voting.sol/Voting.json'
+import VotingContract from '@/types/contracts/voting.sol/Voting.json'
 
 type Props = {
     onNewVoterAdded?: (voterAddr: string) => unknown
