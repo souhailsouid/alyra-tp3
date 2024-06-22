@@ -1,25 +1,10 @@
 'use client'
 
-import {
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    Transition,
-} from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ReactNode } from 'react'
 
-const user = {
-    name: 'Tom Cook',
-    email: 'tom@example.com',
-    imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
 const navigation = [
     { name: 'Voters', href: '/dashboard/voters' },
     { name: 'Propositions', href: '/dashboard/proposals' },
@@ -57,12 +42,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                                                     key={item.name}
                                                     href={item.href}
                                                     className={classNames(
-                                                        item.current
+                                                        /*item.current
                                                             ? 'border-indigo-500 text-gray-900'
-                                                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                                                            :*/ 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                                                         'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium'
                                                     )}
-                                                    aria-current={item.current ? 'page' : undefined}
                                                 >
                                                     {item.name}
                                                 </a>
@@ -95,12 +79,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                                             as="a"
                                             href={item.href}
                                             className={classNames(
-                                                item.current
+                                                /*item.current
                                                     ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                                                    : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
+                                                    :*/ 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
                                                 'block border-l-4 py-2 pl-3 pr-4 text-base font-medium'
                                             )}
-                                            aria-current={item.current ? 'page' : undefined}
                                         >
                                             {item.name}
                                         </DisclosureButton>
