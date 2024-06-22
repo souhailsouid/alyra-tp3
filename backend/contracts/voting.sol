@@ -77,6 +77,9 @@ contract Voting is Ownable {
 
     constructor() Ownable(msg.sender) {}
 
+    /**
+     * @notice Use to prevent some functions to be call if they are not called by an address registered in the "voters"
+     */
     modifier onlyVoters() {
         require(voters[msg.sender].isRegistered, "You're not a voter");
         _;
@@ -95,6 +98,11 @@ contract Voting is Ownable {
         return voters[_addr];
     }
 
+    /**
+     * @notice Get the proposal object according to the proposal id passed in param
+     * @param _id Proposal id to get
+     * @return {Proposal} Proposal object returned
+     */
     function getOneProposal(uint _id) external view onlyVoters returns (Proposal memory) {
         return proposalsArray[_id];
     }
@@ -114,6 +122,10 @@ contract Voting is Ownable {
 
     // ::::::::::::: PROPOSAL ::::::::::::: //
 
+    /**
+     * @notice Add a proposal to the list of proposals. Voters will be able to vote for any of the added proposal
+     * @param _desc Description of the proposal to add
+     */
     function addProposal(string calldata _desc) external onlyVoters {
         require(workflowStatus == WorkflowStatus.ProposalsRegistrationStarted, "Proposals are not allowed yet");
         require(keccak256(abi.encode(_desc)) != keccak256(abi.encode("")), "Vous ne pouvez pas ne rien proposer"); // facultatif
@@ -128,6 +140,10 @@ contract Voting is Ownable {
 
     // ::::::::::::: VOTE ::::::::::::: //
 
+    /**
+     * @notice Vote for a proposal submitted by a voter.
+     * @param _id Id of the proposal
+     */
     function setVote(uint _id) external onlyVoters {
         require(workflowStatus == WorkflowStatus.VotingSessionStarted, "Voting session havent started yet");
         require(voters[msg.sender].hasVoted != true, "You have already voted");
@@ -141,7 +157,9 @@ contract Voting is Ownable {
     }
 
     // ::::::::::::: STATE ::::::::::::: //
-
+    /**
+     * @notice Enables voters to add proposals
+     */
     function startProposalsRegistering() external onlyOwner {
         require(workflowStatus == WorkflowStatus.RegisteringVoters, "Registering proposals cant be started now");
         workflowStatus = WorkflowStatus.ProposalsRegistrationStarted;
@@ -153,6 +171,9 @@ contract Voting is Ownable {
         emit WorkflowStatusChange(WorkflowStatus.RegisteringVoters, WorkflowStatus.ProposalsRegistrationStarted);
     }
 
+    /**
+     * @notice Stops the submition of new proposals
+     */
     function endProposalsRegistering() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.ProposalsRegistrationStarted,
@@ -165,6 +186,9 @@ contract Voting is Ownable {
         );
     }
 
+    /**
+     * @notice Starts the voting session: voters can vote for a proposal
+     */
     function startVotingSession() external onlyOwner {
         require(
             workflowStatus == WorkflowStatus.ProposalsRegistrationEnded,
@@ -174,12 +198,19 @@ contract Voting is Ownable {
         emit WorkflowStatusChange(WorkflowStatus.ProposalsRegistrationEnded, WorkflowStatus.VotingSessionStarted);
     }
 
+    /**
+     * @notice Stops the voting session: voters cannot vote for a proposal anymore
+     */
     function endVotingSession() external onlyOwner {
         require(workflowStatus == WorkflowStatus.VotingSessionStarted, "Voting session havent started yet");
         workflowStatus = WorkflowStatus.VotingSessionEnded;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionStarted, WorkflowStatus.VotingSessionEnded);
     }
 
+    /**
+     * @notice Draw the winning proposal
+     * @dev We could use a 'memory' array instead of the proposalsArray to reduce gas cost due to the iteration on a "storage" variable.
+     */
     function tallyVotes() external onlyOwner {
         require(workflowStatus == WorkflowStatus.VotingSessionEnded, "Current status is not voting session ended");
         uint _winningProposalId;
