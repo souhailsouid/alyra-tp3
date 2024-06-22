@@ -21,8 +21,8 @@ const user = {
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 const navigation = [
-    { name: 'Voters', href: '/dashbard/voters' },
-    { name: 'Proposals', href: '#' },
+    { name: 'Voters', href: '/dashboard/voters' },
+    { name: 'Propositions', href: '/dashboard/proposals' },
 ]
 
 function classNames(...classes: unknown[]) {
