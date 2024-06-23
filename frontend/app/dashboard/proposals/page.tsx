@@ -51,7 +51,7 @@ export default function Pages() {
         return <p>Verification en cours...</p>
     }
     if (!isVoter && !isAdmin) {
-        return null
+        return <WorkflowStatusComponent />
     }
 
     return (

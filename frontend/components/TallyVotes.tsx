@@ -9,11 +9,11 @@ import { wagmiContractConfig } from '@/lib/utils'
 import { useWorkflowStatusContext } from '@/app/context/WorkflowStatusContext'
 import { VotingSessionProps } from '@/lib/types'
 import withWorkflowStatus from '@/app/hoc/withWorkflowStatus'
-
+import { useUserRole } from '@/app/hooks/useUserRole'
 
 const TallyVotes: React.FC<VotingSessionProps> = ({ isConnected }) => {
-
-    const { refetch } = useWorkflowStatusContext();
+    const { isAdmin } = useUserRole()
+    const { refetch } = useWorkflowStatusContext()
     const { writeContract, isPending } = useWriteContract({
         mutation: {
             onSuccess: async () => {
@@ -23,14 +23,14 @@ const TallyVotes: React.FC<VotingSessionProps> = ({ isConnected }) => {
             onError: (e: any) => {
                 console.error({ e })
                 toast.error(e.shortMessage || e.message)
-            }
+            },
         },
     })
 
     const tallyVotesSession = () => {
         writeContract({
             ...wagmiContractConfig,
-            functionName: "tallyVotes",
+            functionName: 'tallyVotes',
             args: [],
         })
     }
@@ -43,9 +43,8 @@ const TallyVotes: React.FC<VotingSessionProps> = ({ isConnected }) => {
             return { disabled: true, wording: 'Chargement ...' }
         }
 
-
-        return { disabled: false, wording: 'Comptabiliser les votes' }
-    }, [isConnected, isPending,])
+        return { disabled: !isAdmin, wording: 'Comptabiliser les votes' }
+    }, [isConnected, isPending, isAdmin])
 
     return (
         <div className="border rounded-xl p-6 mb-10 space-x-4">
@@ -53,7 +52,6 @@ const TallyVotes: React.FC<VotingSessionProps> = ({ isConnected }) => {
                 {btnVotingState.wording}
             </Button>
         </div>
-
     )
 }
 export default withWorkflowStatus(TallyVotes)
