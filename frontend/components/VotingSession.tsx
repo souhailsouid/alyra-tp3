@@ -8,11 +8,15 @@ import { Button } from '@/components/ui/button'
 import { wagmiContractConfig } from '@/lib/utils'
 import { VotingSessionProps } from '@/lib/types'
 import withWorkflowStatus from '@/app/hoc/withWorkflowStatus'
+import { useUserRole } from '@/app/hooks/useUserRole'
 
-
-
-const VotingSession: React.FC<VotingSessionProps> = ({ isConnected, workflowStatus, isAdmin, refetchWorkflowStatus, votingStatus }) => {
-
+const VotingSession: React.FC<VotingSessionProps> = ({
+    isConnected,
+    workflowStatus,
+    isAdmin,
+    refetchWorkflowStatus,
+    votingStatus,
+}) => {
     const showToastMsgWithContext = () => {
         switch (workflowStatus) {
             case votingStatus.PROPOSALS_SESSION_ENDED:
@@ -25,12 +29,12 @@ const VotingSession: React.FC<VotingSessionProps> = ({ isConnected, workflowStat
         mutation: {
             onSuccess: async () => {
                 showToastMsgWithContext()
-                await refetchWorkflowStatus();
+                await refetchWorkflowStatus()
             },
             onError: (e: any) => {
                 console.error({ e })
                 toast.error(e.shortMessage || e.message)
-            }
+            },
         },
     })
 
@@ -39,12 +43,12 @@ const VotingSession: React.FC<VotingSessionProps> = ({ isConnected, workflowStat
             case votingStatus.PROPOSALS_SESSION_ENDED:
                 return writeContract({
                     ...wagmiContractConfig,
-                    functionName: "startVotingSession",
+                    functionName: 'startVotingSession',
                 })
             case votingStatus.VOTING_SESSION_STARTED:
                 return writeContract({
                     ...wagmiContractConfig,
-                    functionName: "endVotingSession",
+                    functionName: 'endVotingSession',
                 })
         }
     }
@@ -65,10 +69,8 @@ const VotingSession: React.FC<VotingSessionProps> = ({ isConnected, workflowStat
             return { disabled: false, wording: 'Session de vote cloturée' }
         }
 
-        return { disabled: false, wording: 'Démarrer la session de vote' }
-
-    }, [isConnected, isPending, workflowStatus, votingStatus])
-
+        return { disabled: !isAdmin, wording: 'Démarrer la session de vote' }
+    }, [isConnected, isPending, workflowStatus, votingStatus, isAdmin])
 
     if (!isConnected || !isAdmin) {
         return null
@@ -81,7 +83,6 @@ const VotingSession: React.FC<VotingSessionProps> = ({ isConnected, workflowStat
             </Button>
         </div>
     )
-
 }
 
 export default withWorkflowStatus(VotingSession)
