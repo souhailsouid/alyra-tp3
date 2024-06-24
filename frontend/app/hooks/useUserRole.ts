@@ -9,13 +9,17 @@ export const useUserRole = () => {
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
     const [isUserRoleLoading, setIsLoading] = useState(true)
     const [errorUserRole, setError] = useState<Error | null>(null)
+    const [voterAddressList, setVoterAddressList] = useState<string[]>([])
+
 
     useWatchContractEvent({
         ...wagmiContractConfig,
         eventName: 'VoterRegistered',
         fromBlock: 1n,
         onLogs: (logs: any[]) => {
-            setIsVoter(logs.some((log) => log.args.voterAddress === address))
+            setVoterAddressList((voters) => {
+                return [...new Set([...voters, ...logs.map((log) => log.args.voterAddress)])]
+            })
         },
     })
 
@@ -23,7 +27,7 @@ export const useUserRole = () => {
         ...wagmiContractConfig,
         functionName: 'owner',
     })
-
+ 
     useEffect(() => {
         if (ownerAddress) {
             ownerAddress === address ? setIsAdmin(true) : setIsAdmin(false)
@@ -33,7 +37,10 @@ export const useUserRole = () => {
             setError(ownerError)
             setIsLoading(false)
         }
-    }, [ownerAddress, ownerError, address, isUserRoleLoading])
+        if(voterAddressList){
+            setIsVoter(voterAddressList.some((voter) => voter === address))
+        }
+    }, [ownerError, isUserRoleLoading, voterAddressList, address, ownerAddress])
 
     return { ownerAddress, errorUserRole, isAdmin, isConnected, isUserRoleLoading, isVoter }
 }

@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { useWorkflowStatusContext } from '@/app/context/WorkflowStatusContext'
 import ProposalsRegistering from '@/components/proposalsRegistering'
@@ -10,12 +10,13 @@ import TallyVotes from '@/components/TallyVotes'
 import ViewsWinnerProposal from '@/components/viewsWinnerProposal'
 import { VotingStatus } from '@/lib/constants'
 import VotingForm from '@/components/forms/votingForm'
-import { useUserRole } from '@/app/hooks/useUserRole'
 import WorkflowStatusComponent from '@/components/ui/WorkflowStatusComponent'
+import withWorkflowStatus from '@/app/hoc/withWorkflowStatus'
+import { VotingSessionProps } from '@/lib/types'
+import withAuthMiddleware from '@/app/hoc/withAuthMiddleware'
 
-export default function Pages() {
-    const { currentStatus, showError, isLoading } = useWorkflowStatusContext()
-    const { isConnected, isAdmin, isVoter, isUserRoleLoading } = useUserRole()
+const Pages: React.FC<VotingSessionProps> = () => {
+    const { currentStatus } = useWorkflowStatusContext()
 
     const showContentWithStatus = () => {
         switch (currentStatus) {
@@ -36,23 +37,10 @@ export default function Pages() {
                 return <ProposalForm />
             case VotingStatus.VOTING_SESSION_STARTED:
                 return <VotingForm />
-            default:
-                return null
         }
     }
-
-    if (isLoading) return <div>Verification de status en cours</div>
-    if (showError) return <div>Erreur lors du changement de status</div>
-
-    if (!isConnected) {
-        return <p>Connectez-vous pour accéder à cette page</p>
-    }
-    if (isUserRoleLoading) {
-        return <p>Verification en cours...</p>
-    }
-    if (!isVoter && !isAdmin) {
-        return <WorkflowStatusComponent />
-    }
+    
+    
 
     return (
         <div>
@@ -63,3 +51,5 @@ export default function Pages() {
         </div>
     )
 }
+
+export default withWorkflowStatus(withAuthMiddleware(Pages))
