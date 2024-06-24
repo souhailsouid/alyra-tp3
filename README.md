@@ -5,25 +5,43 @@
 1. Lancer la blockchain en local: `npx hardhat node`
 2. Déployer le contract Voting.sol: `npx hardhat ignition deploy ./ignition/modules/Voting.ts --network localhost`
 
-### Verify contract
+### Verification du contrat
+
+Voici le processus pour vérifier le contrat sur le testnet
 
 1. `cp .env.dist .env`
-2. Modifier le .env
-3. Déployer le contrat sur Sepolia
-4. `npx hardhat verify --network sepolia <adresse du contrat>`
+1. `pnpm install`
+1. Modifier le .env avec les variables nécessaires
+1. Déployer le contrat sur Sepolia
+1. `npx hardhat verify --network sepolia <adresse du contrat>`
+
+### Déploiement
+
+Notre smart contract est déployé sur "Sepolia" (et vérifié).
+Sepolia "Voting" contract: https://sepolia.etherscan.io/address/0xCaAa47151feA17C856AE002DabA99D40717cA738#code
+
+---
 
 ## Frontend
 
+1. Copier le `.env.dist` en `.env` et remplacer les variable d'environnements
+1. `pnpm install`
 1. Lancer le frontend avec `npm run dev` ou `pnpm dev`
+    > Lors d'un lancement en local, la blokchain hardhat locale doit être lancée et le smart contract Voting deployé
+
+### Déploiement
+
+Le frontend est déployé sur Vercel. Voici le lien vers notre dapp: https://alyra-tp3.vercel.app/dashboard/voters
+A chaque commit, notre frontend est redéployé.
 
 ## Divers
 
 -   Lien vers les tâches: https://github.com/users/Pandazaur/projects/4/views/1
 -   Lien vers l'enregistrement Loom: https://www.loom.com/share/3cc165fa701645f1b5487f45af48e0a0?sid=7182d280-c4ba-48e5-a7bb-4a3e982454d9
--   Sepolia contract: https://sepolia.etherscan.io/address/0xCaAa47151feA17C856AE002DabA99D40717cA738#code
+-   Sepolia "Voting" contract: https://sepolia.etherscan.io/address/0xCaAa47151feA17C856AE002DabA99D40717cA738#code
 -   Lien vers notre dApp: https://alyra-tp3.vercel.app/dashboard/voters
 
-### Interaction avec le smart contract
+### Interactions avec le smart contract
 
 5. Interact with the Contract
    After deploying the contract, you can interact with it using the functions provided. Here are the steps to interact with the key functions:
