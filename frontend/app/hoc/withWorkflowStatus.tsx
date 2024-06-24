@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAccount } from 'wagmi';
 
 import { useWorkflowStatusContext } from '../context/WorkflowStatusContext';
 import { VotingStatus } from '@/lib/constants';
@@ -8,9 +7,9 @@ import { useUserRole } from '@/app/hooks/useUserRole'
 
 const withWorkflowStatus = (WrappedComponent: React.ComponentType<any>) => {
     const ComponentWithWorkflowStatus = (props: any) => {
-        const { isConnected } = useAccount();
+
         const { currentStatus, refetch } = useWorkflowStatusContext();
-        const { isAdmin, isVoter } = useUserRole();
+        const { isAdmin, isVoter, isUserRoleLoading,  isConnected,  } = useUserRole();
 
         return (
             <WrappedComponent
@@ -21,6 +20,8 @@ const withWorkflowStatus = (WrappedComponent: React.ComponentType<any>) => {
                 votingStatus={VotingStatus}
                 isAdmin={isAdmin}
                 isVoter={isVoter}
+                isUserRoleLoading={isUserRoleLoading}
+       
             />
         );
     };

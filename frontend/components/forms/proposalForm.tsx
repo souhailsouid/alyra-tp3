@@ -1,6 +1,6 @@
 'use client'
 import React, { useMemo, useState } from 'react'
-import { useWriteContract } from 'wagmi'
+import {  useWriteContract } from 'wagmi'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -8,10 +8,12 @@ import { Label } from '@/components/ui/label'
 import { wagmiContractConfig } from '../../lib/utils';
 import { VotingSessionProps } from '@/lib/types'
 import withWorkflowStatus from '@/app/hoc/withWorkflowStatus'
+import { useWorkflowStatusContext } from '@/app/context/WorkflowStatusContext'
 
 
-const ProposalForm: React.FC<VotingSessionProps> = ({ isConnected, refetchWorkflowStatus, isAdmin, isVoter }) => {
+const ProposalForm: React.FC<VotingSessionProps> = ({ isConnected, refetchWorkflowStatus, isAdmin}) => {
     const [description, setDescription] = useState('')
+    const { currentStatus } = useWorkflowStatusContext()
     const { writeContract, isPending } = useWriteContract({
         mutation: {
             onSuccess: async () => {
@@ -34,7 +36,6 @@ const ProposalForm: React.FC<VotingSessionProps> = ({ isConnected, refetchWorkfl
             args: [description],
         })
     }
-
     const buttonState = useMemo(() => {
         if (!isConnected) {
             return { disabled: true, wording: 'Vous devez connecter votre wallet' }
@@ -48,9 +49,10 @@ const ProposalForm: React.FC<VotingSessionProps> = ({ isConnected, refetchWorkfl
         return { disabled: false, wording: 'Ajouter la proposition' }
     }, [isConnected, isPending,])
 
-    if (!isConnected || isAdmin || !isVoter) {
+    if (isAdmin) {
         return null
     }
+ 
     return (
         <div className="border rounded-xl p-6 mb-10 space-x-4">
             <div className="border rounded-xl p-6 mb-10">

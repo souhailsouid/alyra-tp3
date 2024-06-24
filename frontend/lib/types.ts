@@ -8,6 +8,10 @@ export interface VotingSessionProps {
     votingStatus: VotingStatusType
     isAdmin: boolean
     isVoter: boolean
+    isUserRoleLoading?: boolean
+    address?: string | undefined
+    voterRegistered?: any[];
+    status?: string
 }
 
 export interface WhiteListProps {

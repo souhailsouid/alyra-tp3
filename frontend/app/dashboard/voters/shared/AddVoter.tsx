@@ -6,12 +6,16 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import VotingContract from '@/types/contracts/voting.sol/Voting.json'
+import withWorkflowStatus from '@/app/hoc/withWorkflowStatus'
 
 type Props = {
-    onNewVoterAdded?: (voterAddr: string) => unknown
+    onNewVoterAdded?: (voterAddr: string) => unknown,
+    isVoter: boolean,
+    isAdmin: boolean,
 }
 
-export default function AddVoter(props: Props) {
+
+const  AddVoter = (props: Props)  => {
     const [addressToAdd, setAddressToAdd] = useState('')
     const { isConnected } = useAccount()
 
@@ -50,6 +54,11 @@ export default function AddVoter(props: Props) {
         return { disabled: false, wording: 'Ajouter le voteur' }
     }, [isConnected, isPending])
 
+    if (!isConnected || !props.isAdmin) {
+        return null
+    }
+
+   
     return (
         <div className="border rounded-xl p-6 mb-10">
             <h2 className="text-xl font-medium mb-6">Ajouter un voteur</h2>
@@ -71,3 +80,7 @@ export default function AddVoter(props: Props) {
         </div>
     )
 }
+
+export default withWorkflowStatus(AddVoter)
+
+
