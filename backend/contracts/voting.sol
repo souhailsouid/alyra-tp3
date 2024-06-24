@@ -13,8 +13,6 @@ contract Voting is Ownable {
      * @return the winning proposal id linked to the `proposalArray`
      */
     uint public winningProposalID;
-    uint private voterCount;
-    uint private totalVotes;
 
     /**
      * @title Struct of a voter that can submit a proposal and vote for other proposals
@@ -129,7 +127,6 @@ contract Voting is Ownable {
         require(voters[_addr].isRegistered != true, "Already registered");
 
         voters[_addr].isRegistered = true;
-        voterCount++;
         emit VoterRegistered(_addr);
     }
 
@@ -162,6 +159,7 @@ contract Voting is Ownable {
     /**
      * @notice Vote for a proposal submitted by a voter.
      * @param _id Id of the proposal
+     * @dev Nous avons ajouté un require de sécurité pour éviter de voter pour la proposition GENESIS.
      */
     function setVote(uint _id) external onlyVoters {
         require(
@@ -170,11 +168,11 @@ contract Voting is Ownable {
         );
         require(voters[msg.sender].hasVoted != true, "You have already voted");
         require(_id < proposalsArray.length, "Proposal not found"); // pas obligé, et pas besoin du >0 car uint
+        require(_id > 0, "Cannot vote for GENESIS proposal"); // Ajout d'une sécurité pour ne pas voter pour la proposition "GENESIS"
 
         voters[msg.sender].votedProposalId = _id;
         voters[msg.sender].hasVoted = true;
         proposalsArray[_id].voteCount++;
-        totalVotes++;
 
         emit Voted(msg.sender, _id);
     }
@@ -188,8 +186,6 @@ contract Voting is Ownable {
             workflowStatus == WorkflowStatus.RegisteringVoters,
             "Registering proposals cant be started now"
         );
-
-        require(voterCount > 0, "There is no voter registered yet ");
 
         workflowStatus = WorkflowStatus.ProposalsRegistrationStarted;
 
@@ -246,7 +242,6 @@ contract Voting is Ownable {
             workflowStatus == WorkflowStatus.VotingSessionStarted,
             "Voting session havent started yet"
         );
-        require(totalVotes > 0, "No votes have been cast");
 
         workflowStatus = WorkflowStatus.VotingSessionEnded;
         emit WorkflowStatusChange(
@@ -264,7 +259,9 @@ contract Voting is Ownable {
             workflowStatus == WorkflowStatus.VotingSessionEnded,
             "Current status is not voting session ended"
         );
+
         uint _winningProposalId;
+        
         for (uint256 p = 0; p < proposalsArray.length; p++) {
             if (
                 proposalsArray[p].voteCount >

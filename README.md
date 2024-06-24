@@ -20,6 +20,11 @@ Voici le processus pour vérifier le contrat sur le testnet
 Notre smart contract est déployé sur "Sepolia" (et vérifié).
 Sepolia "Voting" contract: https://sepolia.etherscan.io/address/0xCaAa47151feA17C856AE002DabA99D40717cA738#code
 
+### Ajout de sécurité
+
+Nous avons ajouté une règle de sécurité à la ligne 180 du contrat:
+`require(_id > 0, "Cannot vote for GENESIS proposal"); // Ajout d'une sécurité pour ne pas voter pour la proposition "GENESIS"`
+
 ---
 
 ## Frontend

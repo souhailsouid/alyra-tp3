@@ -5,30 +5,29 @@ import { toast } from 'sonner'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { wagmiContractConfig } from '../../lib/utils';
+import { wagmiContractConfig } from '../../lib/utils'
 import { VotingSessionProps } from '@/lib/types'
 import withWorkflowStatus from '@/app/hoc/withWorkflowStatus'
 
-
 const VotingForm: React.FC<VotingSessionProps> = ({ isConnected, refetchWorkflowStatus, isAdmin, isVoter }) => {
+    const [proposalIds, setProposalIds] = useState<string[]>([])
+    const [selectedValue, setSelectedValue] = useState<string>('')
 
-    const [proposalId, setProposalId] = useState<string[]>([]);
-    const [selectedValue, setSelectedValue] = useState<string>('');
     useWatchContractEvent({
         ...wagmiContractConfig,
         eventName: 'ProposalRegistered',
         fromBlock: 1n,
         onLogs: (logs: any[]) => {
-            setProposalId((prevProposals) =>
-                [...new Set([...prevProposals, ...logs.map((log) => log.args.proposalId.toString())])]
-            );
+            setProposalIds((prevProposals) => [
+                ...new Set([...prevProposals, ...logs.map((log) => log.args.proposalId.toString())]),
+            ])
         },
-    });
+    })
 
-    const formattedProposals = proposalId.map((proposal: string, index: number) => ({
-        value: (index + 1).toString(),
-        label: proposal,
-    }));
+    const formattedProposals = proposalIds.map((proposalId: string) => ({
+        value: proposalId,
+        label: proposalId,
+    }))
 
     const { writeContract, isPending } = useWriteContract({
         mutation: {
@@ -38,24 +37,22 @@ const VotingForm: React.FC<VotingSessionProps> = ({ isConnected, refetchWorkflow
             },
             onError: (e: any) => {
                 console.error({ e })
-                toast.error(e.shortMessage || e.message,)
-
+                toast.error(e.shortMessage || e.message)
             },
         },
     })
 
-
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedValue(event.target.value);
-    };
+        setSelectedValue(event.target.value)
+    }
 
     const handleSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.preventDefault();
-        const proposalIndex = parseInt(selectedValue);
+        event.preventDefault()
+        const proposalIndex = parseInt(selectedValue)
 
         writeContract({
             ...wagmiContractConfig,
-            functionName: "setVote",
+            functionName: 'setVote',
             args: [proposalIndex],
         })
     }
@@ -90,15 +87,20 @@ const VotingForm: React.FC<VotingSessionProps> = ({ isConnected, refetchWorkflow
                         placeholder="Veuillez selectioner une proposition"
                     />
                 </div>
-                {selectedValue && <span className='text-2xl font-bold'>Vous avez choisi la proposition numéro {selectedValue}</span>}
+                {selectedValue && (
+                    <span className="text-2xl font-bold">Vous avez choisi la proposition numéro {selectedValue}</span>
+                )}
                 <br />
-                <Button className="mt-4" onClick={(e) => handleSubmit(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)} disabled={buttonState.disabled}>
+                <Button
+                    className="mt-4"
+                    onClick={(e) => handleSubmit(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+                    disabled={buttonState.disabled}
+                >
                     {buttonState.wording}
                 </Button>
             </div>
         </div>
     )
-
 }
 
 export default withWorkflowStatus(VotingForm)
